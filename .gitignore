@@ -4,3 +4,5 @@ __pycache__/
 *.log
 scripts/
 .DS_Store
+LIVE_URL.txt
+tunnel.log

@@ -464,6 +464,7 @@ async function run(){
   const t0=Date.now(); clock=setInterval(()=>$('#runclock').textContent=((Date.now()-t0)/1000).toFixed(0)+' s',500);
   try{
     const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({repo_url:S.repo||null})}).then(r=>r.json());
+    if(!r.run_id){handle({type:'error',message:r.error||'Could not start the scan.'});handle({type:'done',seconds:0});return}
     es=new EventSource('/api/stream/'+encodeURIComponent(r.run_id));
     es.onmessage=m=>{try{handle(JSON.parse(m.data))}catch(err){console.error(err)}};
     es.onerror=()=>{if(es&&es.readyState===2){handle({type:'error',message:'Lost connection to the PatchPilot server.'});handle({type:'done',seconds:((Date.now()-t0)/1000).toFixed(1)})}};

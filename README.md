@@ -9,7 +9,7 @@ Paste a GitHub repo → find what's exploitable → fix it → prove the fix →
 
 Built at **Tokyo AgentForge 2026** with **Daytona · Nosana · Tavily**
 
-**[🌐 Live showcase](https://ana2k.github.io/patch-pilot/)** · **[📑 Pitch deck (PDF)](docs/PatchPilot-deck.pdf)** · **[📊 Results](#-results-on-real-repos)** · **[🚀 Run it](#-run-it)**
+**[🌐 Live showcase](https://ana2k.github.io/patch-pilot/)** · **[🟢 Live demo](https://6e76309432953d.app.lhr.life)** <sub>(runs while the host laptop is online)</sub> · **[📑 Pitch deck (PDF)](docs/PatchPilot-deck.pdf)** · **[📊 Results](#-results-on-real-repos)** · **[🚀 Run it](#-run-it)**
 
 <img src="docs/app-landing.png" width="85%" alt="PatchPilot landing page"/>
 
@@ -71,5 +71,7 @@ cp .env.example .env        # DAYTONA_API_KEY, NOSANA_API_KEY, TAVILY_API_KEY
 ```
 Open `http://localhost:8000`, paste any public repo (or leave it empty for the demo) and click **Run security test**. You'll watch the 5 stages light up, the agent's thoughts, and the sandbox terminal live; the report lands in ~1–2 min.
 Saved reports open instantly: `/#case=CodeAF` · `/#case=DVWA` · `/#case=NodeGoat`.
+
+**Share it publicly:** `ssh -R 80:localhost:8000 nokey@localhost.run` prints a public https URL. Scans still run in Daytona sandboxes; at most 2 run at once (`MAX_CONCURRENT_RUNS`). **Always-on hosting:** `python deploy_daytona.py` runs PatchPilot itself inside a public Daytona sandbox (needs a Daytona tier with open outbound network).
 
 <sub>`agent.py` orchestrator + fixer · `security.py` sub-agents + report · `scanners.py` PHP/Go/JS/Python checks · `server.py` API · `static/` site · `demo_repo/` fake secrets only. Scanned code runs only inside Daytona.</sub>

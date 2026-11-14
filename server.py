@@ -32,6 +32,9 @@ def index():
 
 @app.post("/api/run")
 def start(req: RunReq):
+    active = sum(1 for evs in RUNS.values() if evs and evs[-1].get("type") != "done")
+    if active >= int(__import__("os").getenv("MAX_CONCURRENT_RUNS", "2")):
+        return JSONResponse({"error": "PatchPilot is busy with other scans. Try again in a minute, or open a saved case study."}, 429)
     rid = uuid.uuid4().hex[:8]
     RUNS[rid] = []
 
