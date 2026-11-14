@@ -13,7 +13,11 @@ PatchPilot is an AI security engineer. Paste any GitHub repo and it:
 
 > AI review tools *comment* on code. PatchPilot *executes* its claims.
 
-Built at **Tokyo AgentForge · 14 Nov 2026**.
+Built at **Tokyo AgentForge · 14 Nov 2026** · Repo: https://github.com/Ana2k/patch-pilot · Deck: [docs/PatchPilot-deck.pdf](docs/PatchPilot-deck.pdf)
+
+| CodeAF report | NodeGoat report | Microsoft generative-ai-for-beginners |
+|---|---|---|
+| ![](docs/report-CodeAF.png) | ![](docs/report-NodeGoat.png) | ![](docs/report-generative-ai-for-beginners.png) |
 
 ---
 
