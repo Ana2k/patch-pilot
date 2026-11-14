@@ -9,7 +9,7 @@ Paste a GitHub repo → find what's exploitable → fix it → prove the fix →
 
 Built at **Tokyo AgentForge 2026** with **Daytona · Nosana · Tavily**
 
-**[📑 Pitch deck (PDF)](docs/PatchPilot-deck.pdf)** · **[📊 Results](#-results-on-real-repos)** · **[🚀 Run it](#-run-it)**
+**[🌐 Live showcase](https://ana2k.github.io/patch-pilot/)** · **[📑 Pitch deck (PDF)](docs/PatchPilot-deck.pdf)** · **[📊 Results](#-results-on-real-repos)** · **[🚀 Run it](#-run-it)**
 
 <img src="docs/app-landing.png" width="85%" alt="PatchPilot landing page"/>
 
