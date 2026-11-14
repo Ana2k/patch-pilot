@@ -1,105 +1,109 @@
+<div align="center">
+
 # 🛡️ PatchPilot
+### The AI security engineer that **proves** its fixes
 
-**Find what's exploitable. Fix it. Prove the fix.**
+**Paste a GitHub repo → find what's exploitable → fix it → prove the fix → get a report anyone can read.**
 
-PatchPilot is an AI security engineer. Paste any GitHub repo and it:
-1. clones the code into a throwaway **Daytona** sandbox,
-2. reads the project's **DeepWiki** docs (via **Tavily**) to understand the architecture and attack surface,
-3. hunts with two parallel sub-agents: **Threat Intel** (OSV + FIRST EPSS + CISA KEV + live security news via Tavily) and
-   **Code Review** (a PHP/Go/JS/Python pattern hunter + bandit, triaged by an LLM),
-4. **fixes** vulnerable dependencies with an agent loop on an open model running on **Nosana** GPUs,
-5. **proves** the fix by re-installing, re-scanning and re-running the tests in the sandbox, then writes a plain-English report:
-   🔴 **Critical** · 🟠 **Needs a patch** · 🔵 **Monitor**.
+Built in one afternoon at **Tokyo AgentForge · 14 Nov 2026** with **Daytona · Nosana · Tavily**
 
-> AI review tools *comment* on code. PatchPilot *executes* its claims.
+📑 [Pitch deck (PDF)](docs/PatchPilot-deck-9slides.pdf) · 🖥️ [Run it](#-run-it-in-2-minutes) · 📊 [Real results](#-real-results-on-real-repos)
 
-Built at **Tokyo AgentForge · 14 Nov 2026** · Repo: https://github.com/Ana2k/patch-pilot · Deck: [docs/PatchPilot-deck.pdf](docs/PatchPilot-deck.pdf)
+![PatchPilot landing page](docs/app-landing.png)
 
-| CodeAF report | NodeGoat report | Microsoft generative-ai-for-beginners |
-|---|---|---|
-| ![](docs/report-CodeAF.png) | ![](docs/report-NodeGoat.png) | ![](docs/report-generative-ai-for-beginners.png) |
+</div>
 
 ---
 
-## Screenshots
+## 💡 Why this matters
+- Most breaches start with a **known** vulnerability: an old library or a classic injection bug.
+- Teams don't patch because they **can't tell what's actually exploitable**, and **upgrades break code**.
+- AI review bots **comment** on code. Nobody **runs** the fix to prove it works.
 
-| PatchPilot landing + live architecture | Plain-English security report |
+**PatchPilot runs everything.** Every claim in its report is backed by commands it actually executed in an isolated sandbox.
+
+---
+
+## 📊 Real results on real repos
+| # | Repository | Stack | Verdict | What PatchPilot found | Time |
+|---|---|---|---|---|---|
+| 1 | [Agent-Field/CodeAF](https://github.com/Agent-Field/CodeAF) | Go | 🟠 Needs patches | Read the DeepWiki architecture first, then scanned 110 Go modules → **22 known vulnerabilities** in `golang.org/x/net`, `x/crypto`, `x/image`, ranked by real-world exploit odds; flagged a shell-injection-prone CI helper | 81 s |
+| 2 | [digininja/DVWA](https://github.com/digininja/DVWA) | PHP | 🔴 Not safe to ship | **9 critical**: OS command injection (`shell_exec('ping ' . $target)`), SQL injection in login and password update, local file inclusion, each with a working fix (`escapeshellarg`, PDO prepared statements, allow-lists) | 61 s |
+| 3 | [OWASP/NodeGoat](https://github.com/OWASP/NodeGoat) | Node.js | 🔴 Not safe to ship | **`eval()` remote code execution** in `contributions.js` + **177 known vulnerabilities** across 804 npm packages | 91 s |
+| 4 | [microsoft/generative-ai-for-beginners](https://github.com/microsoft/generative-ai-for-beginners) | Python | 🟢 Clean | 66 dependencies, 0 known vulnerabilities, no risky code patterns | 106 s |
+| 5 | `demo_repo` (invoice-mailer) | Python | ✅ **Auto-patched** | **20 → 0** vulnerabilities; the upgrade broke Jinja2 (`Markup`/`escape` removed), the agent found and fixed it, **tests 3/3 green** | ~110 s |
+
+Average cost per scan: **$0.002–0.013** of inference on Nosana. Full JSON reports are in [`cases/`](cases/).
+
+### 🔍 The reports
+| 🔴 DVWA (PHP): 9 critical injections | 🟠 CodeAF (Go): dependency risk |
 |---|---|
-| ![Landing](docs/app-landing.png) | ![Report](docs/app-report.png) |
+| ![DVWA report](docs/app-report.png) | ![CodeAF report](docs/report-CodeAF.png) |
+| 🔴 **NodeGoat (Node): eval() RCE + 177 CVEs** | 🟢 **Microsoft repo: clean bill of health** |
+| ![NodeGoat report](docs/report-NodeGoat.png) | ![Microsoft report](docs/report-generative-ai-for-beginners.png) |
 
-| Daytona: 4 sandboxes scanning 4 repos in parallel | Nosana: our dedicated GPU (RTX 3080 · $0.10/h) | Tavily: API usage |
+---
+
+## ⚙️ How it works: 5 steps
+```
+ GitHub URL
+    │
+ ① SANDBOX ── Daytona: a fresh, disposable Linux VM (1 vCPU · 1 GB · boots in ~1 s). Nothing runs on your laptop.
+    │
+ ② RECON ──── Tavily extract → DeepWiki: read the project's architecture and attack surface first
+    │
+ ③ HUNT ───── two sub-agents in parallel
+    │           ├─ Threat Intel: OSV vulnerability DB + FIRST EPSS (odds of attack in 30 days) + CISA KEV (exploited in the wild) + Tavily security news
+    │           └─ Code Review: pattern hunter (PHP · Go · JS · Python) + bandit → LLM triage on Nosana
+    │
+ ④ FIX ────── Nosana-hosted Qwen agent loop: think → run a tool in the sandbox → read the result → repeat
+    │
+ ⑤ PROVE ──── re-install, re-scan, re-run tests in the same sandbox → diff + PR text
+    │
+ 📄 REPORT ── 🔴 Critical · 🟠 Needs a patch · 🔵 Monitor, written for non-engineers
+```
+
+## 🤝 How each partner is used (code-level)
+| Partner | What we use | Why it's the right tool here |
+|---|---|---|
+| **Daytona** | `Daytona.create()`, `process.exec()`, `git.clone()`, `fs.upload_files()`, `fs.download_file()`, `delete()` | Untrusted code + AI-chosen shell commands **must** run isolated. Sandboxes boot in about 1 s, so we scanned **4 repos in 4 sandboxes at once** and threw them away afterwards |
+| **Nosana** | OpenAI-compatible inference gateway (Qwen 3.8 27B, function calling) **+** our own GPU deployment (Qwen 3.5 9B on an RTX 3080, $0.10/h) with automatic failover; live credits via `api.nosana.com/api/credits/balance` | Open models on decentralized GPUs keep each scan at fractions of a cent, and failover kept the demo alive when the shared gateway went down mid-hackathon |
+| **Tavily** | `extract()` on `deepwiki.com/<owner>/<repo>` · `search(include_answer=True)` · `search(topic="news")` + security-forum domains | Turns docs, changelogs and security chatter into LLM-ready text with sources. Fresh knowledge an LLM's frozen weights don't have |
+
+| Daytona: 4 sandboxes scanning in parallel | Nosana: our dedicated GPU | Tavily: API usage |
 |---|---|---|
 | ![Daytona](docs/daytona-sandboxes.jpg) | ![Nosana](docs/nosana-gpu-deployment.jpg) | ![Tavily](docs/tavily-usage.jpg) |
 
 ---
 
-## Architecture
+## 🐘 PHP-specific checks
+Command injection (`system`/`exec`/`shell_exec`/`passthru`/backticks, including via variables) · SQL built from variables · `include`/`require` of user input (LFI/RFI) · `eval`/`assert` · `unserialize` · unsafe uploads · `echo $_GET` (XSS) · MD5 passwords · triage briefed on php-cgi argument injection (CVE-2024-4577 class) and type juggling.
 
-```
- GitHub URL
-     │
-     ▼
-┌──────────────────── ① Daytona sandbox (1 vCPU · 1 GB RAM · 3 GB disk · ~1 s boot) ────────────────────┐
-│  git clone ─▶ ② RECON ─────────▶ ③ HUNT ─────────────────────────┬──▶ ④ FIX ───────────▶ ⑤ PROVE      │
-│               Tavily extract     ├ Threat Intel sub-agent ─┐     │    Nosana Qwen agent     re-install  │
-│               → DeepWiki docs    │  OSV · EPSS · CISA KEV  ├─▶ merge   loop: run · read ·   re-scan     │
-│                                  │  Tavily news & forums   │          write · web_search   re-test     │
-│                                  └ Code Review sub-agent ──┘          · finish             git diff    │
-│                                     pattern hunter · bandit → Nosana LLM triage              │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-     │
-     ▼
- Report: 🔴 Critical / 🟠 Needs a patch / 🔵 Monitor  (+ diff & PR text when auto-patched)
-```
+## 🧠 What is an "agent + sandbox"? (for non-engineers)
+1. **An agent is a loop:** the AI thinks, picks one tool (run a command, read a file, search the web), sees the result, and repeats.
+2. **The sandbox is a disposable computer** where that loop can safely run commands on code nobody has vetted.
+3. **Sub-agents are specialists** working in parallel, like a security team.
+4. **Never trust "done":** PatchPilot re-checks everything itself before it calls a fix verified.
 
-| Stage | What it does (plain English) | Partner | Why this partner is special here |
-|---|---|---|---|
-| ① Sandbox | A throwaway computer where the untrusted repo and every AI-chosen command run | **Daytona** | ~1 s cold start, full Linux with git and network, SDK for `process.exec`, `fs`, `git`. We run 4 repos in 4 sandboxes at once and delete them afterwards |
-| ② Recon | Reads the docs first, like a senior engineer | **Tavily → DeepWiki** | `tav.extract(["https://deepwiki.com/owner/repo"])` returns clean, LLM-ready architecture docs for any public repo |
-| ③ Hunt | Finds vulnerable libraries and dangerous code, ranked by real-world risk | OSV · FIRST EPSS · CISA KEV · **Tavily** search/news | EPSS = probability of exploitation in the next 30 days, which spots what will hurt *before* it's headline news |
-| ④ Fix | Upgrades libraries and repairs code the upgrade broke | **Nosana** | Open model on decentralized GPUs: OpenAI-compatible gateway, **plus** our own dedicated GPU deployment with automatic failover and live credit tracking |
-| ⑤ Prove | Re-installs, re-scans and re-tests, then shows the diff | **Daytona** | Same isolated machine, so the evidence is reproducible |
+---
 
-## Case studies (real runs, saved in `cases/`)
-
-| Repo | Stack | Result |
-|---|---|---|
-| demo `invoice-mailer` | Python | **20 → 0** dependency advisories, auto-patched. The agent fixed Jinja2 3.1's removed `Markup`/`escape` and tests passed 3/3 ✅. It also flagged a hard-coded key, pickle RCE, `shell=True` and `verify=False` |
-| [Agent-Field/CodeAF](https://github.com/Agent-Field/CodeAF) | Go | 🟠 81 s: DeepWiki recon of the harness; 110 Go modules → 22 advisories in `golang.org/x/net`, `x/crypto`, `x/image` (ranked by EPSS/KEV); code review flagged a shell-injection-prone path in a CI helper |
-| [digininja/DVWA](https://github.com/digininja/DVWA) | PHP | **🔴 9 critical in 61 s**: OS command injection (`shell_exec('ping ' . $target)`), SQL injection in login / password update, local file inclusion; each with a concrete fix (`escapeshellarg`, PDO prepared statements, allow-lists). Open it at `/#case=DVWA` |
-| [OWASP/NodeGoat](https://github.com/OWASP/NodeGoat) | Node.js | 🔴 91 s: 804 npm packages → 177 advisories (top EPSS: `decode-uri-component`, `lodash`, `qs`); **`eval()` remote code execution** in `contributions.js` |
-
-## PHP-specific checks
-`eval`/`assert` on input · `system`/`exec`/`shell_exec`/`passthru`/backticks · `include`/`require` of `$_GET` (LFI/RFI) ·
-`unserialize` (object injection) · SQL concatenated from `$_GET`/`$_POST` · `echo $_GET` (XSS) · MD5 passwords ·
-LLM triage briefed on php-cgi argument injection (CVE-2024-4577 class) and type juggling.
-Composer dependencies are checked against OSV's Packagist feed.
-
-## How an AI agent + sandbox work (60-second version)
-1. **An agent is a loop, not a model:** think → call a tool → read the result → repeat (`for step in range(MAX_STEPS)` in `agent.py`).
-2. **Tools are JSON schemas.** The model only *asks* to `run`, `read_file`, `write_file`, `web_search` or `finish`, and our code executes it inside Daytona. A required `thought` argument makes the reasoning visible.
-3. **Sub-agents are specialists** with their own tools and prompts. Threat Intel and Code Review run in parallel threads.
-4. **Never trust "done".** Prove ignores the model's claim and re-checks everything itself.
-
-## Run it
+## 🚀 Run it in 2 minutes
 ```bash
-cd proofpilot
+git clone https://github.com/Ana2k/patch-pilot && cd patch-pilot
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-cp .env.example .env        # DAYTONA_API_KEY, NOSANA_API_KEY, TAVILY_API_KEY (+ optional NOSANA_DEPLOYMENT_URL)
+cp .env.example .env    # add DAYTONA_API_KEY, NOSANA_API_KEY, TAVILY_API_KEY
 .venv/bin/uvicorn server:app --port 8000      # open http://localhost:8000
 ```
+Leave the box empty for the demo, or paste any public GitHub repo. Open a saved report directly with `http://localhost:8000/#case=DVWA`.
 
-## Usage manual
-- **Run a test:** paste a public GitHub URL (or leave it empty for the demo), then click **Run security test**. The page switches to the live view.
-- **Read the report:** verdict line first, then the 3 buckets. Every item says *what it means* in everyday words and *how to fix it*.
-  **EPSS %** = chance of an attack in the next 30 days · **EXPLOITED IN THE WILD** = listed in CISA's KEV catalog.
-- **Share it:** **Download report (.md)** or **Print / save PDF**.
-- **Hover the diagram** to see what each partner does, with live numbers (sandbox size, tokens, cost, Nosana credits left).
-- **Case studies:** click any card to open its saved report.
+## 🗂️ Repo map
+| File | What it is |
+|---|---|
+| `agent.py` | Orchestrator, fixer agent loop, Nosana routing + failover |
+| `security.py` | Recon / Threat Intel / Code Review sub-agents + plain-English report |
+| `scanners.py` | Lockfile parsers (pip, Go, Composer, npm), pattern hunter, bandit |
+| `server.py` | FastAPI + live event stream + compute telemetry + case studies |
+| `static/index.html` | The website |
+| `cases/` | Saved reports · `docs/` deck + screenshots · `demo_repo/` intentionally vulnerable app (fake secrets) |
 
-## Files
-`agent.py` orchestrator + fixer loop + Nosana routing · `security.py` recon / threat-intel / code-review sub-agents + report ·
-`scanners.py` lockfile parsers, pattern hunter, bandit · `server.py` FastAPI, SSE stream, compute telemetry, case studies ·
-`static/index.html` the site · `demo_repo/` intentionally vulnerable target · `cases/` saved reports · `docs/` screenshots.
-
-**Safety:** scanned code only ever runs inside Daytona; sandboxes are deleted after each run. Secrets in `demo_repo` are fake.
+🔒 Scanned code only ever runs inside Daytona; sandboxes are deleted after every run.
