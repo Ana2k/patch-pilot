@@ -1,0 +1,123 @@
+<!doctype html><html><head><meta charset="utf-8"><title>PatchPilot deck</title>
+<style>
+@page{size:1920px 1080px;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Helvetica Neue",Arial,sans-serif;color:#0B1F3A;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.s{width:1920px;height:1080px;padding:90px 110px 70px;position:relative;page-break-after:always;background:#fff;overflow:hidden}
+.k{font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:#00A3A1;font-weight:700;margin-bottom:22px}
+h1{font-size:54px;line-height:1.15;font-weight:700;max-width:1600px}
+h1:after{content:"";display:block;width:120px;height:6px;background:#00A3A1;margin-top:28px}
+.foot{position:absolute;left:110px;right:110px;bottom:40px;font-size:18px;color:#6b7a90;border-top:1px solid #d6dde6;padding-top:14px;display:flex;justify-content:space-between}
+.cols{display:grid;gap:40px;margin-top:60px}
+.c3{grid-template-columns:repeat(3,1fr)}.c2{grid-template-columns:1fr 1fr}
+.box{border-top:6px solid #0B1F3A;padding:28px 6px 0}
+.box .n{font-size:64px;font-weight:800;color:#00A3A1}
+.box h3{font-size:32px;margin:10px 0 14px}.box p{font-size:25px;line-height:1.45;color:#33445c}
+.flow{display:flex;gap:18px;margin-top:70px;align-items:stretch}
+.st{flex:1;background:#0B1F3A;color:#fff;padding:28px 24px;border-radius:6px;position:relative}
+.st b{display:block;font-size:20px;color:#7fe3e1;letter-spacing:.1em}.st h3{font-size:34px;margin:8px 0}.st p{font-size:21px;line-height:1.4;color:#d3dce8}
+.st.r{background:#00A3A1}.st.r b{color:#0B1F3A}.st.r p{color:#062b2a}
+.bar{display:grid;grid-template-columns:340px 1fr 430px;align-items:center;gap:24px;margin:30px 0}
+.bar .l{font-size:28px;font-weight:700}.bar .l small{display:block;font-size:20px;color:#6b7a90;font-weight:400}
+.tr{height:54px;background:#eef2f6;position:relative}.fi{height:100%;background:#0B1F3A;display:flex;align-items:center;justify-content:flex-end;padding-right:16px;color:#fff;font-size:24px;font-weight:700}
+.fi.a{background:#00A3A1}.bar .t{font-size:22px;line-height:1.35;color:#33445c}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px}
+.shots img{width:100%;height:600px;object-fit:cover;object-position:top;border:1px solid #d6dde6}
+.shots div p{font-size:22px;margin-top:12px;color:#33445c}
+table{width:100%;border-collapse:collapse;margin-top:50px;font-size:24px}
+th{text-align:left;background:#0B1F3A;color:#fff;padding:18px;font-size:22px}td{padding:20px 18px;border-bottom:1px solid #d6dde6;vertical-align:top;line-height:1.4}
+td:first-child{font-weight:800;width:220px}code{font-family:Menlo,monospace;font-size:20px;background:#eef2f6;padding:2px 6px}
+.title{background:#0B1F3A;color:#fff}.title h1{font-size:84px;max-width:1500px;margin-top:220px}.title h1:after{background:#00A3A1}
+.title .sub{font-size:34px;color:#b9c6d8;margin-top:40px}.title .p{position:absolute;bottom:90px;left:110px;font-size:28px;color:#7fe3e1;letter-spacing:.12em}
+.big{font-size:150px;font-weight:800;color:#00A3A1;line-height:1}
+</style></head><body>
+
+<section class="s title">
+ <div class="k" style="color:#7fe3e1">Tokyo AgentForge · 14 Nov 2026</div>
+ <h1>PatchPilot: the AI security engineer that proves its fixes</h1>
+ <div class="sub">Finds what's exploitable, fixes it, and re-runs the tests to prove nothing broke.</div>
+ <div class="p">DAYTONA × NOSANA × TAVILY</div>
+</section>
+
+<section class="s">
+ <div class="k">The problem</div>
+ <h1>Teams know they have vulnerable code, but they don't know what's exploitable, and upgrades break things</h1>
+ <div class="cols c3">
+  <div class="box"><div class="n">01</div><h3>Alert fatigue</h3><p>Scanners list hundreds of CVEs with no signal on which ones attackers are actually using right now.</p></div>
+  <div class="box"><div class="n">02</div><h3>Fixes break builds</h3><p>Security upgrades change APIs (e.g. Jinja2 3.1 removed <code>Markup</code>), so patches sit unmerged for months.</p></div>
+  <div class="box"><div class="n">03</div><h3>AI reviewers only comment</h3><p>Today's AI tools suggest changes but never execute them. Nobody proves the fix works.</p></div>
+ </div>
+ <div class="foot"><span>Source: PatchPilot team analysis; OSV.dev, CISA KEV catalog, FIRST EPSS</span><span>2</span></div>
+</section>
+
+<section class="s">
+ <div class="k">The solution</div>
+ <h1>Five stages turn a GitHub URL into a verified fix and a plain-English report in about 60–120 seconds</h1>
+ <div class="flow">
+  <div class="st"><b>① DAYTONA</b><h3>Sandbox</h3><p>Throwaway VM boots in ~1 s. Untrusted code and AI-chosen commands never touch a laptop.</p></div>
+  <div class="st"><b>② TAVILY + DEEPWIKI</b><h3>Recon</h3><p>Reads the repo's architecture docs first and maps where attackers get in.</p></div>
+  <div class="st"><b>③ OSV · EPSS · KEV</b><h3>Hunt</h3><p>Two parallel sub-agents: Threat Intel ranks CVEs by real exploit odds; Code Review finds injection bugs.</p></div>
+  <div class="st"><b>④ NOSANA · QWEN</b><h3>Fix</h3><p>Agent loop (think → act → observe) upgrades packages and repairs code the upgrade broke.</p></div>
+  <div class="st"><b>⑤ DAYTONA</b><h3>Prove</h3><p>Re-install, re-scan, re-test independently. Never trusts the model's "done".</p></div>
+  <div class="st r"><b>OUTPUT</b><h3>Report</h3><p>🔴 Critical · 🟠 Needs a patch · 🔵 Monitor, in everyday words, with the exact fix, diff and PR text.</p></div>
+ </div>
+ <div class="foot"><span>Source: PatchPilot architecture (agent.py, security.py, scanners.py)</span><span>3</span></div>
+</section>
+
+<section class="s">
+ <div class="k">Proof: real runs today</div>
+ <h1>On four real repositories PatchPilot found critical, exploitable issues in under 2 minutes each, and auto-fixed one end to end</h1>
+ <div style="margin-top:50px">
+  <div class="bar"><div class="l">Agent-Field/CodeAF<small>Go · 110 modules · 81 s</small></div><div class="tr"><div class="fi" style="width:12.4%">22</div></div><div class="t">22 advisories in golang.org/x/net, x/crypto, x/image</div></div>
+  <div class="bar"><div class="l">digininja/DVWA<small>PHP · 61 s</small></div><div class="tr"><div class="fi" style="width:5.1%;background:#c8102e">9</div></div><div class="t"><b>9 critical</b>: command injection, SQL injection, file inclusion</div></div>
+  <div class="bar"><div class="l">OWASP/NodeGoat<small>Node · 804 packages · 91 s</small></div><div class="tr"><div class="fi" style="width:100%">177</div></div><div class="t">177 advisories + <b>eval() remote code execution</b></div></div>
+  <div class="bar"><div class="l">invoice-mailer demo<small>Python · auto-patched</small></div><div class="tr"><div class="fi a" style="width:11.3%">20→0</div></div><div class="t"><b>20 → 0 advisories</b>, tests 3/3 still green ✅</div></div>
+ </div>
+ <div class="foot"><span>Bars = known advisories (critical code findings shown in red). Source: PatchPilot case studies, cases/*.json, 14 Nov 2026</span><span>4</span></div>
+</section>
+
+<section class="s">
+ <div class="k">The product</div>
+ <h1>One screen to run a test; one report a non-technical founder can act on</h1>
+ <div class="shots">
+  <div><img src="app-landing.png"><p>Landing: paste a repo, watch the 5-stage pipeline live</p></div>
+  <div><img src="app-report.png"><p>Report: verdict, Critical / Patch / Monitor, what it means, how to fix</p></div>
+ </div>
+ <div class="foot"><span>Source: PatchPilot live UI (localhost demo, DVWA report)</span><span>5</span></div>
+</section>
+
+<section class="s">
+ <div class="k">Partner technology</div>
+ <h1>Each partner powers a stage the product cannot work without, integrated at code level</h1>
+ <table>
+  <tr><th>Partner</th><th>How we use it (code)</th><th>Why it's essential here</th></tr>
+  <tr><td>Daytona</td><td><code>create()</code> · <code>process.exec()</code> · <code>git.clone()</code> · <code>fs.upload/download</code> · <code>delete()</code></td><td>~1 s boot; runs untrusted repos and AI-chosen commands safely; 4 sandboxes in parallel</td></tr>
+  <tr><td>Nosana</td><td>OpenAI-compatible gateway (Qwen 3.8 27B, tool calling) + our own RTX 3080 deployment, $0.10/h, auto-failover</td><td>Open model on decentralized GPUs; live credit balance from api.nosana.com</td></tr>
+  <tr><td>Tavily</td><td><code>extract()</code> → DeepWiki recon · <code>search(include_answer)</code> fix research · <code>topic="news"</code> + forums</td><td>Fresh knowledge model weights don't have: migration guides, exploit chatter</td></tr>
+ </table>
+ <div class="foot"><span>Source: agent.py, security.py, server.py</span><span>6</span></div>
+</section>
+
+<section class="s">
+ <div class="k">Impact</div>
+ <h1>Security review that is predictive, provable and costs about a cent per repository</h1>
+ <div class="cols c3" style="margin-top:80px">
+  <div class="box"><div class="big">~1¢</div><h3>per scan</h3><p>$0.003–0.013 of inference per repository; sandboxes deleted after each run.</p></div>
+  <div class="box"><div class="big">60–120s</div><h3>per repository</h3><p>From GitHub URL to a bucketed report, with a verified patch for Python projects.</p></div>
+  <div class="box"><div class="big">30 days</div><h3>predictive triage</h3><p>FIRST EPSS = probability of exploitation in the next 30 days, plus CISA "exploited in the wild".</p></div>
+ </div>
+ <div class="foot"><span>Source: measured run telemetry, 14 Nov 2026</span><span>7</span></div>
+</section>
+
+<section class="s">
+ <div class="k">What's next</div>
+ <h1>Next, PatchPilot opens verified pull requests on every repository, automatically</h1>
+ <div class="cols c3">
+  <div class="box"><div class="n">1</div><h3>GitHub App</h3><p>Opens PRs only when the sandbox proves tests still pass.</p></div>
+  <div class="box"><div class="n">2</div><h3>Auto-fix everywhere</h3><p>Extend the fixer from Python to Node, Go and PHP (detection already works).</p></div>
+  <div class="box"><div class="n">3</div><h3>CI integration</h3><p>Run on every push; block merges on Critical findings.</p></div>
+ </div>
+ <div style="margin-top:80px;font-size:34px;font-weight:700">github.com/&lt;repo&gt; · Built with Daytona × Nosana × Tavily</div>
+ <div class="foot"><span>PatchPilot · Tokyo AgentForge 2026</span><span>8</span></div>
+</section>
+</body></html>

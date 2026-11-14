@@ -1,0 +1,45 @@
+{
+ "id": "bb2cbad5",
+ "repo": "https://github.com/microsoft/generative-ai-for-beginners",
+ "title": "generative-ai-for-beginners",
+ "ecosystem": "Python",
+ "stats": {
+  "seconds": 105.9,
+  "deps_vulns": 0,
+  "packages": 66,
+  "code_findings": 0,
+  "critical": 0,
+  "patch": 0,
+  "monitor": 0,
+  "kev": 0,
+  "patched": false,
+  "cost_usd": 0.001954
+ },
+ "report": {
+  "verdict": "\ud83d\udfe2 No urgent issues found.",
+  "plain_summary": "We checked your Python project and found no urgent security problems. Nothing needs to be fixed right now. Keep updating your software regularly to stay safe.",
+  "repo": "https://github.com/microsoft/generative-ai-for-beginners",
+  "ecosystem": "Python",
+  "counts": {
+   "critical": 0,
+   "patch": 0,
+   "monitor": 0
+  },
+  "items": []
+ },
+ "recon_summary": "- **What it does**: A Microsoft educational course with 21 lessons teaching beginners to build generative AI applications, including LLM basics, prompt engineering, text/image/search apps, RAG, function calling, and AI security.\n\n- **Tech stack**: Python and TypeScript examples, Jupyter notebooks, OpenAI/Azure AI services, `.env` configuration, Miniconda/pip, GitHub, and low-code AI tooling.\n\n- **Untrusted input / attack surface**: User prompts, uploaded documents or data used for search/RAG, function-calling arguments, external API responses, and locally stored secrets such as `OPENAI_API_KEY` and `GITHUB_TOKEN`.\n\n- **Riskiest component**: The LLM prompt-to-tool pipeline, especially prompt injection into function calling or RAG workflows, because untrusted input can influence model behavior, leak data, or trigger unintended actions.",
+ "intel": {
+  "summary": "0 CVEs scored. None are on CISA KEV. ",
+  "items": [],
+  "chatter": []
+ },
+ "compute": {
+  "id": "9c01c098-99cf-480c-944a-a7422be939e0",
+  "cpu": 1,
+  "memory_gb": 1,
+  "disk_gb": 3,
+  "gpu": 0,
+  "target": "eu",
+  "boot_s": 0.56
+ }
+}

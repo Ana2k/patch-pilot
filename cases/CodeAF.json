@@ -1,0 +1,345 @@
+{
+ "id": "e2011694",
+ "repo": "https://github.com/Agent-Field/CodeAF",
+ "title": "CodeAF",
+ "ecosystem": "Go",
+ "stats": {
+  "seconds": 60.2,
+  "deps_vulns": 22,
+  "packages": 110,
+  "code_findings": 0,
+  "critical": 0,
+  "patch": 5,
+  "monitor": 0,
+  "kev": 0,
+  "patched": false,
+  "cost_usd": 0.0031102
+ },
+ "report": {
+  "verdict": "\ud83d\udfe0 Ship with caution: 5 issue(s) need a patch soon.",
+  "plain_summary": "There are no urgent security emergencies right now. Five common parts of the app have known weaknesses that can be fixed by updating them. We should apply those updates to keep the app safe.",
+  "repo": "https://github.com/Agent-Field/CodeAF",
+  "ecosystem": "Go",
+  "counts": {
+   "critical": 0,
+   "patch": 5,
+   "monitor": 0
+  },
+  "items": [
+   {
+    "bucket": "patch",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "golang.org/x/image 0.32.0 has 9 known vulnerabilities",
+    "where": "golang.org/x/image@0.32.0",
+    "plain": "This library has publicly documented security holes. Upgrade to 0.45.0 or newer.",
+    "fix": "upgrade golang.org/x/image to >= 0.45.0",
+    "cve": "CVE-2026-46601",
+    "epss": 0.00609,
+    "kev": false
+   },
+   {
+    "bucket": "patch",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "golang.org/x/net 0.57.0 has 7 known vulnerabilities",
+    "where": "golang.org/x/net@0.57.0",
+    "plain": "This library has publicly documented security holes. Upgrade to 1.27.2 or newer.",
+    "fix": "upgrade golang.org/x/net to >= 1.27.2",
+    "cve": "CVE-2026-78659",
+    "epss": 0.00866,
+    "kev": false
+   },
+   {
+    "bucket": "patch",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "golang.org/x/crypto 0.54.0 has 4 known vulnerabilities",
+    "where": "golang.org/x/crypto@0.54.0",
+    "plain": "This library has publicly documented security holes. Upgrade to 0.58.1-0.20261009181718-2f1f834330b2 or newer.",
+    "fix": "upgrade golang.org/x/crypto to >= 0.58.1-0.20261009181718-2f1f834330b2",
+    "cve": "CVE-2026-56855",
+    "epss": 0.005,
+    "kev": false
+   },
+   {
+    "bucket": "patch",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "golang.org/x/text 0.40.0 has 1 known vulnerabilities",
+    "where": "golang.org/x/text@0.40.0",
+    "plain": "This library has publicly documented security holes. Upgrade to 0.41.0 or newer.",
+    "fix": "upgrade golang.org/x/text to >= 0.41.0",
+    "cve": "CVE-2026-56851",
+    "epss": 0.00466,
+    "kev": false
+   },
+   {
+    "bucket": "patch",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "go.opentelemetry.io/otel/trace 1.45.0 has 1 known vulnerabilities",
+    "where": "go.opentelemetry.io/otel/trace@1.45.0",
+    "plain": "This library has publicly documented security holes. Upgrade to 1.47.0 or newer.",
+    "fix": "upgrade go.opentelemetry.io/otel/trace to >= 1.47.0",
+    "cve": "CVE-2026-128085",
+    "epss": 0,
+    "kev": false
+   }
+  ]
+ },
+ "recon_summary": "- **What it does:** CodeAF is an AI coding/agent platform that runs LLM-driven sessions, proposes and executes software tasks, plans/verifies changes, and supports TUI, CLI, headless, and remote multi-machine operation.\n- **Tech stack:** Go-based system with internal packages (`session`, `exec`, `plan`, `factory`, `tui3`), LLM provider clients, MCP/connections, event journal/materialized views, relay/cluster consensus, and CI/Makefile workflows.\n- **Untrusted input / attack surface:** User prompts and steering, model-generated tool calls/code, remote protocol/hosted sessions/pairing/device sync, MCP/connections/accounts, repository/PR content, and session/memory files.\n- **Riskiest component:** The execution engine/tool belt (`internal/exec` plus task execution and permissions), because it can run code, modify files, and interact with external systems based on untrusted model or user input.",
+ "intel": {
+  "summary": "21 CVEs scored. None are on CISA KEV. Highest exploit likelihood: CVE-2026-78659 in golang.org/x/net (0.9% in 30 days, riskier than 59% of all CVEs).",
+  "items": [
+   {
+    "cve": "CVE-2026-78659",
+    "package": "golang.org/x/net",
+    "epss": 0.00866,
+    "percentile": 0.59221,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-78663",
+    "package": "golang.org/x/net",
+    "epss": 0.00858,
+    "percentile": 0.58989,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-78669",
+    "package": "golang.org/x/net",
+    "epss": 0.00847,
+    "percentile": 0.58632,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-97032",
+    "package": "golang.org/x/net",
+    "epss": 0.00676,
+    "percentile": 0.52801,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-46601",
+    "package": "golang.org/x/image",
+    "epss": 0.00609,
+    "percentile": 0.49735,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-46602",
+    "package": "golang.org/x/image",
+    "epss": 0.00609,
+    "percentile": 0.49736,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-46604",
+    "package": "golang.org/x/image",
+    "epss": 0.00609,
+    "percentile": 0.49736,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-78660",
+    "package": "golang.org/x/net",
+    "epss": 0.00542,
+    "percentile": 0.46134,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-56855",
+    "package": "golang.org/x/crypto",
+    "epss": 0.005,
+    "percentile": 0.43414,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-56851",
+    "package": "golang.org/x/text",
+    "epss": 0.00466,
+    "percentile": 0.40836,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-56854",
+    "package": "golang.org/x/crypto",
+    "epss": 0.00437,
+    "percentile": 0.38534,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-78662",
+    "package": "golang.org/x/crypto",
+    "epss": 0.00431,
+    "percentile": 0.37878,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-46603",
+    "package": "golang.org/x/image",
+    "epss": 0.00412,
+    "percentile": 0.36017,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-78661",
+    "package": "golang.org/x/net",
+    "epss": 0.00409,
+    "percentile": 0.3568,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-42500",
+    "package": "golang.org/x/image",
+    "epss": 0.00384,
+    "percentile": 0.3299,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-46599",
+    "package": "golang.org/x/image",
+    "epss": 0.00353,
+    "percentile": 0.2945,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-33809",
+    "package": "golang.org/x/image",
+    "epss": 0.00341,
+    "percentile": 0.28031,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-33813",
+    "package": "golang.org/x/image",
+    "epss": 0.0034,
+    "percentile": 0.27929,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-97045",
+    "package": "golang.org/x/net",
+    "epss": 0.00267,
+    "percentile": 0.19035,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-33812",
+    "package": "golang.org/x/image",
+    "epss": 0.00112,
+    "percentile": 0.01389,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-128085",
+    "package": "go.opentelemetry.io/otel/trace",
+    "epss": 0.0,
+    "percentile": 0.0,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   }
+  ],
+  "chatter": [
+   {
+    "title": "Binance Outflows Reach $4.7 Billion After North Korea Hack - Insurance Journal",
+    "url": "https://www.insurancejournal.com/news/national/2026/11/02/891112.htm",
+    "snippet": "Traders have pulled billions from Binance since late last week, when the crypto exchange giant suffered the largest cyber theft in history. Net withdrawals from the platform reached $4.7 billion by Monday morning in Lond",
+    "date": "Mon, 02 Nov 2026 12:48:13 GMT"
+   },
+   {
+    "title": "Tether, Circle freeze $2.38 billion after Binance reports security incident - Reuters",
+    "url": "https://www.reuters.com/legal/transactional/tether-circle-freeze-238-billion-after-binance-reports-security-incident-2026-10-29/",
+    "snippet": "Oct 29 (Reuters) - Circle (CRCL.N) and Tether on Thursday froze over $2.38 billion in stablecoin currency after Binance said it \u200bwas actively investigating a potential security \u200cissue. Binance, the world's largest crypto",
+    "date": "Thu, 29 Oct 2026 22:27:43 GMT"
+   },
+   {
+    "title": "Sweet Security Research Identifies Go Implementation of Node2Shell Vulnerability, Expanding Attack Surface to Major HTTP Frameworks - markets.businessinsider.com",
+    "url": "https://markets.businessinsider.com/news/stocks/sweet-security-research-identifies-go-implementation-of-node2shell-vulnerability-expanding-attack-surface-to-major-http-frameworks-1036662747",
+    "snippet": "# Sweet Security Research Identifies Go Implementation of Node2Shell Vulnerability, Expanding Attack Surface to Major HTTP Frameworks. Tomer Ben Gera, an engineer on Sweet Security\u2019s sensor team, identified that a parall",
+    "date": "Sun, 25 Oct 2026 20:38:33 GMT"
+   },
+   {
+    "title": "Node2Shell puts Microsoft and Node.js on Brotli patch duty - www.csoonline.com",
+    "url": "https://www.csoonline.com/article/4241027/node2shell-puts-microsoft-and-node-js-on-brotli-patch-duty.html",
+    "snippet": "## An out-of-bounds write in Google\u2019s Brotli decoder affects multiple software ecosystems, prompting security updates for .NET, Node.js and two Python packages. A vulnerability in Google\u2019s Brotli compression library coul",
+    "date": "Tue, 27 Oct 2026 00:00:00 GMT"
+   },
+   {
+    "title": "Security Issues with golang.org/x/text and golang.org/x/crypto \u00b7 Issue #1566 \u00b7 spf13/cobra \u00b7 GitHub",
+    "url": "https://github.com/spf13/cobra/issues/1566",
+    "snippet": "Copy link\n\nClosed\n\nClosed\n\nSecurity Issues with golang.org/x/text and golang.org/x/crypto#1566\n\nCopy link\n\nMilestone\n\nNext\n\n## Description\n\n@sunny0826\n\nsunny0826\n\nopened on Dec 17, 2021\n\nIssue body actions\n\nJust like spf",
+    "date": null
+   },
+   {
+    "title": "Does go have a bad security reputation? I get that anything can be insecure and ... | Hacker News",
+    "url": "https://news.ycombinator.com/item?id=42044457",
+    "snippet": "You can argue that people can build packages outside of the Go stdlib too, like if the stdlib \"image/draw\" package is so bad it can't be used, they can make \"golang.org/x/image/draw\", or if the stdlib crypto package is b",
+    "date": null
+   },
+   {
+    "title": "Vulnerabilities as of 2026-05-16 \u00b7 Issue #4062 \u00b7 itzg/docker-minecraft-server \u00b7 GitHub",
+    "url": "https://github.com/itzg/docker-minecraft-server/issues/4062",
+    "snippet": "| critical: 0 high: 1 medium: 0 low: 0 golang.org/x/net `0.52.0` (golang) `pkg:golang/golang.org/x/net@0.52.0`   high : CVE--2026--33814   |  |  |  --- | | Affected range | `<0.53.0` | | Fixed version | `0.53.0` | | EPSS",
+    "date": null
+   },
+   {
+    "title": "Vulnerability report for Docker golang:1.18 | Snyk",
+    "url": "https://snyk.io/test/docker/golang%3A1.18",
+    "snippet": "mishandles the handshake phase and mishandles use of sequence numbers. For example, there is an effective attack against SSH's use of ChaCha20-Poly1305 (and CBC with Encrypt-then-MAC). The bypass occurs in chacha20-poly1",
+    "date": null
+   }
+  ]
+ },
+ "compute": {
+  "id": "0efcdc70-18fc-40f9-8e75-adcf77b8d685",
+  "cpu": 1,
+  "memory_gb": 1,
+  "disk_gb": 3,
+  "gpu": 0,
+  "target": "eu",
+  "boot_s": 0.95
+ }
+}

@@ -1,0 +1,7 @@
+daytona
+tavily-python
+openai
+httpx
+fastapi
+uvicorn[standard]
+python-dotenv

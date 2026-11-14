@@ -1,0 +1,136 @@
+{
+ "id": "71ceb01f",
+ "repo": "https://github.com/digininja/DVWA",
+ "title": "DVWA",
+ "ecosystem": "PHP",
+ "stats": {
+  "seconds": 61.0,
+  "deps_vulns": 0,
+  "packages": 0,
+  "code_findings": 9,
+  "critical": 9,
+  "patch": 0,
+  "monitor": 0,
+  "kev": 0,
+  "patched": false,
+  "cost_usd": 0.005520799999999999
+ },
+ "report": {
+  "verdict": "\ud83d\udd34 Not safe to ship: 9 critical issue(s) need fixing now.",
+  "plain_summary": "Your website has nine serious weaknesses that could let a hacker take control of it. They could steal data, log in as anyone, or change accounts without permission. None of these have been fixed yet, so they should be treated as urgent.",
+  "repo": "https://github.com/digininja/DVWA",
+  "ecosystem": "PHP",
+  "counts": {
+   "critical": 9,
+   "patch": 0,
+   "monitor": 0
+  },
+  "items": [
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "OS Command Injection via Ping",
+    "where": "vulnerabilities/api/src/HealthController.php:88",
+    "plain": "An attacker can trick the server into running any command they want, potentially stealing data or crashing the system.",
+    "fix": "Use escapeshellarg($target) to safely escape the input: exec(\"ping -c 4 \" . escapeshellarg($target), $output, $ret_var);",
+    "rule": "CWE-78"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "OS Command Injection via Shell Exec",
+    "where": "vulnerabilities/exec/source/high.php:26",
+    "plain": "An attacker can execute arbitrary commands on the server by manipulating the input.",
+    "fix": "Use escapeshellarg($target) to escape the input: $cmd = shell_exec('ping ' . escapeshellarg($target));",
+    "rule": "CWE-78"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "SQL Injection in Login Query",
+    "where": "login.php:46",
+    "plain": "An attacker can log in as any user or access sensitive data by entering special characters in the login form.",
+    "fix": "Use prepared statements: $stmt = $pdo->prepare(\"SELECT * FROM users WHERE user = ? AND password = ?\"); $stmt->execute([$user, $pass]);",
+    "rule": "CWE-89"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "SQL Injection in User ID Query",
+    "where": "vulnerabilities/bac/source/medium.php:21",
+    "plain": "An attacker can access or modify data belonging to other users by altering the user ID input.",
+    "fix": "Use prepared statements: $stmt = $pdo->prepare(\"SELECT user_id FROM users WHERE user_id = ?\"); $stmt->execute([$id]);",
+    "rule": "CWE-89"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "SQL Injection in Brute Force Query",
+    "where": "vulnerabilities/brute/source/high.php:19",
+    "plain": "An attacker can bypass login restrictions or extract data from the database by manipulating the input.",
+    "fix": "Use prepared statements: $stmt = $pdo->prepare(\"SELECT * FROM users WHERE user = ? AND password = ?\"); $stmt->execute([$user, $pass]);",
+    "rule": "CWE-89"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "SQL Injection in Password Update",
+    "where": "vulnerabilities/captcha/source/high.php:30",
+    "plain": "An attacker can change passwords or access other users' data by manipulating the password input.",
+    "fix": "Use prepared statements: $stmt = $pdo->prepare(\"UPDATE users SET password = ? WHERE user = ? LIMIT 1\"); $stmt->execute([$pass_new, dvwaCurrentUser()]);",
+    "rule": "CWE-89"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "SQL Injection in CSRF Password Update",
+    "where": "vulnerabilities/csrf/source/high.php:43",
+    "plain": "An attacker can change passwords or access other users' data by manipulating the input.",
+    "fix": "Use prepared statements: $stmt = $pdo->prepare(\"UPDATE users SET password = ? WHERE user = ?\"); $stmt->execute([$pass_new, $current_user]);",
+    "rule": "CWE-89"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "SQL Injection in Credential Test",
+    "where": "vulnerabilities/csrf/test_credentials.php:21",
+    "plain": "An attacker can log in as any user or access sensitive data by entering special characters in the login form.",
+    "fix": "Use prepared statements: $stmt = $pdo->prepare(\"SELECT * FROM users WHERE user = ? AND password = ?\"); $stmt->execute([$user, $pass]);",
+    "rule": "CWE-89"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "Local File Inclusion via Variable",
+    "where": "vulnerabilities/fi/index.php:36",
+    "plain": "An attacker can read or execute sensitive files on the server by manipulating the file path input.",
+    "fix": "Validate and whitelist allowed file paths: if (in_array($file, $allowed_files)) { include $file; }",
+    "rule": "CWE-98"
+   }
+  ]
+ },
+ "recon_summary": "- **What it does:** DVWA is a deliberately vulnerable web application for security training, demonstrating common web vulnerabilities such as SQL injection, XSS, CSRF, file inclusion, command execution, and insecure uploads.\n\n- **Tech stack:** PHP web application with MySQL/MariaDB or SQLite, using a modular structure where each vulnerability has `low`, `medium`, `high`, and `impossible` implementations.\n\n- **Untrusted input / attack surface:** User-controlled HTTP request data enters through the vulnerability module endpoints, including form fields, query parameters, file uploads, and API inputs used by modules such as `sqli/`, `xss_r/`, `xss_s/`, `csrf/`, `fi/`, `exec/`, `upload/`, `brute/`, `cryptography/`, and `api/`.\n\n- **Riskiest component:** The `exec/` command execution module is the riskiest because it demonstrates OS command injection, which can lead to full server compromise if the application is exposed outside a controlled environment.",
+ "intel": {
+  "summary": "0 CVEs scored. None are on CISA KEV. ",
+  "items": [],
+  "chatter": []
+ },
+ "compute": {
+  "id": "71039994-8b4d-4bc2-981a-a9c003162ea6",
+  "cpu": 1,
+  "memory_gb": 1,
+  "disk_gb": 3,
+  "gpu": 0,
+  "target": "eu",
+  "boot_s": 0.72
+ }
+}

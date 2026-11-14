@@ -1,0 +1,374 @@
+{
+ "id": "4957fa13",
+ "repo": "demo: invoice-mailer",
+ "title": "invoice-mailer",
+ "ecosystem": "Python",
+ "stats": {
+  "seconds": 156.4,
+  "deps_vulns": 20,
+  "packages": 12,
+  "code_findings": 5,
+  "critical": 2,
+  "patch": 3,
+  "monitor": 4,
+  "kev": 0,
+  "patched": true,
+  "cost_usd": 0.019003
+ },
+ "report": {
+  "verdict": "\ud83d\udd34 Not safe to ship: 2 critical issue(s) need fixing now.",
+  "plain_summary": "Your system has two serious weaknesses that could let an attacker take control if left unfixed. Three issues have already been fixed, and four smaller ones need to be watched. The biggest risks are unsafe file handling, a secret key left in the code, and not properly checking the partner connection.",
+  "repo": "demo: invoice-mailer",
+  "ecosystem": "Python",
+  "counts": {
+   "critical": 2,
+   "patch": 3,
+   "monitor": 4
+  },
+  "items": [
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "OS Command Injection",
+    "where": "app/export.py:12",
+    "plain": "If a user can control the name of the file being compressed, they could trick the system into running malicious commands on the server, potentially taking full control of it.",
+    "fix": "return subprocess.run([\"gzip\", \"-k\", filename], check=True)",
+    "rule": "CWE-78"
+   },
+   {
+    "bucket": "critical",
+    "kind": "code",
+    "severity": "CRITICAL",
+    "title": "Insecure Deserialization (Pickle)",
+    "where": "app/export.py:17",
+    "plain": "If an attacker can send a specially crafted file to be processed, the system will automatically run the malicious code hidden inside it, leading to a full system compromise.",
+    "fix": "Use a safe format like JSON: import json; return json.loads(blob)",
+    "rule": "CWE-502"
+   },
+   {
+    "bucket": "patch",
+    "kind": "code",
+    "severity": "HIGH",
+    "title": "Hard-coded Credentials",
+    "where": "app/export.py:7",
+    "plain": "The secret key to access the partner portal is written in plain text in the code. If anyone sees the code, they can steal this key and access sensitive data or perform actions on your behalf.",
+    "fix": "import os; PORTAL_TOKEN = os.environ.get(\"PORTAL_TOKEN\")",
+    "rule": "CWE-798"
+   },
+   {
+    "bucket": "patch",
+    "kind": "code",
+    "severity": "MEDIUM",
+    "title": "TLS Certificate Verification Disabled",
+    "where": "app/export.py:23",
+    "plain": "The system is not checking if it is talking to the real partner server. An attacker could intercept the communication and steal the data or inject fake information without you knowing.",
+    "fix": "Remove `verify=False` or ensure it is only used in controlled testing environments with proper CA bundles.",
+    "rule": "CWE-295"
+   },
+   {
+    "bucket": "patch",
+    "kind": "code",
+    "severity": "MEDIUM",
+    "title": "Missing Timeout in HTTP Request",
+    "where": "app/export.py:22",
+    "plain": "If the partner server is slow or down, your application will wait forever, potentially freezing up and becoming unresponsive to other users.",
+    "fix": "return requests.post(portal_url, files={\"f\": fh}, headers={\"Authorization\": PORTAL_TOKEN}, timeout=10)",
+    "rule": "CWE-400"
+   },
+   {
+    "bucket": "monitor",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "urllib3 1.26.5 has 10 known vulnerabilities",
+    "where": "urllib3@1.26.5",
+    "plain": "Already upgraded and re-tested by PatchPilot. This library has publicly documented security holes. Upgrade to 2.8.0 or newer.",
+    "fix": "upgrade urllib3 to >= 2.8.0",
+    "cve": "CVE-2026-21441",
+    "epss": 0.02922,
+    "kev": false
+   },
+   {
+    "bucket": "monitor",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "jinja2 2.11.3 has 4 known vulnerabilities",
+    "where": "jinja2@2.11.3",
+    "plain": "Already upgraded and re-tested by PatchPilot. This library has publicly documented security holes. Upgrade to 3.1.6 or newer.",
+    "fix": "upgrade jinja2 to >= 3.1.6",
+    "cve": "CVE-2024-34064",
+    "epss": 0.00979,
+    "kev": false
+   },
+   {
+    "bucket": "monitor",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "requests 2.25.1 has 4 known vulnerabilities",
+    "where": "requests@2.25.1",
+    "plain": "Already upgraded and re-tested by PatchPilot. This library has publicly documented security holes. Upgrade to 2.33.0 or newer.",
+    "fix": "upgrade requests to >= 2.33.0",
+    "cve": "CVE-2023-32681",
+    "epss": 0.02974,
+    "kev": false
+   },
+   {
+    "bucket": "monitor",
+    "kind": "dependency",
+    "severity": "HIGH",
+    "title": "idna 2.10 has 2 known vulnerabilities",
+    "where": "idna@2.10",
+    "plain": "Already upgraded and re-tested by PatchPilot. This library has publicly documented security holes. Upgrade to 3.15 or newer.",
+    "fix": "upgrade idna to >= 3.15",
+    "cve": "CVE-2024-3651",
+    "epss": 0.01386,
+    "kev": false
+   }
+  ]
+ },
+ "recon_summary": "- **What it does:** Renders invoice emails and fetches foreign-exchange rates for a PatchPilot demo target.\n- **Tech stack:** A small service with email rendering and an FX-rate fetcher, using intentionally pinned, outdated dependencies.\n- **Attack surface:** Untrusted input enters via invoice data used in email rendering and external FX-rate API responses/URLs.\n- **Riskiest component:** The FX-rate fetcher, because it handles external network data with vulnerable pinned dependencies and may enable SSRF or injection risks.",
+ "intel": {
+  "summary": "20 CVEs scored. None are on CISA KEV. Highest exploit likelihood: CVE-2023-32681 in requests (3.0% in 30 days, riskier than 87% of all CVEs).",
+  "items": [
+   {
+    "cve": "CVE-2023-32681",
+    "package": "requests",
+    "epss": 0.02974,
+    "percentile": 0.87467,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-21441",
+    "package": "urllib3",
+    "epss": 0.02922,
+    "percentile": 0.87256,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-3651",
+    "package": "idna",
+    "epss": 0.01386,
+    "percentile": 0.72647,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2023-43804",
+    "package": "urllib3",
+    "epss": 0.0136,
+    "percentile": 0.72172,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-37891",
+    "package": "urllib3",
+    "epss": 0.01141,
+    "percentile": 0.67152,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-47081",
+    "package": "requests",
+    "epss": 0.01022,
+    "percentile": 0.63982,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-34064",
+    "package": "jinja2",
+    "epss": 0.00979,
+    "percentile": 0.62716,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-22195",
+    "package": "jinja2",
+    "epss": 0.00892,
+    "percentile": 0.59954,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2025-66471",
+    "package": "urllib3",
+    "epss": 0.00731,
+    "percentile": 0.54844,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2025-66418",
+    "package": "urllib3",
+    "epss": 0.00731,
+    "percentile": 0.54844,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2023-45803",
+    "package": "urllib3",
+    "epss": 0.00593,
+    "percentile": 0.48903,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-56326",
+    "package": "jinja2",
+    "epss": 0.00522,
+    "percentile": 0.44836,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2025-27516",
+    "package": "jinja2",
+    "epss": 0.00507,
+    "percentile": 0.4382,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2025-50181",
+    "package": "urllib3",
+    "epss": 0.00474,
+    "percentile": 0.41515,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-45409",
+    "package": "idna",
+    "epss": 0.00408,
+    "percentile": 0.35614,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2024-35195",
+    "package": "requests",
+    "epss": 0.0034,
+    "percentile": 0.27865,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-97689",
+    "package": "urllib3",
+    "epss": 0.00335,
+    "percentile": 0.27199,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-44431",
+    "package": "urllib3",
+    "epss": 0.00331,
+    "percentile": 0.26669,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-97687",
+    "package": "urllib3",
+    "epss": 0.00206,
+    "percentile": 0.10744,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   },
+   {
+    "cve": "CVE-2026-25645",
+    "package": "requests",
+    "epss": 0.00194,
+    "percentile": 0.09157,
+    "kev": false,
+    "kev_date": null,
+    "kev_name": null
+   }
+  ],
+  "chatter": [
+   {
+    "title": "Dependency-Track 5.2 SBOM Setup: 12 Steps [2026]",
+    "url": "https://shattered.io/dependency-track-5-2-sbom-cyclonedx-1-7-12-steps-2026",
+    "snippet": "```\n# sample output (IDs replaced with placeholders, your list will differ) CRITICAL CVE-YYYY-NNNNN pyyaml 5.3 HIGH GHSA-xxxx-xxxx requests 2.19.1 HIGH CVE-YYYY-NNNNN urllib3 1.24.3 MEDIUM CVE-YYYY-NNNNN jinja2 2.11.3\n``",
+    "date": "Wed, 04 Nov 2026 20:24:31 GMT"
+   },
+   {
+    "title": "Python Security: CVEs, Django & Flask Hardening | chs.us",
+    "url": "https://chs.us/guides/python",
+    "snippet": "| Layer | Typical bugs |\n --- |\n| Language primitives | `eval`, `exec`, `compile`, `__reduce__`, `__import__`, f-string format injection |\n| Stdlib | `pickle`, `tarfile`, `zipfile`, `subprocess`, `urllib.parse`, `xml.etr",
+    "date": "Sat, 02 May 2026 00:00:00 GMT"
+   },
+   {
+    "title": "F5OS-C 1.8.2 Critical Release Fixes and Known Issues Release Notes | BIG-IP Documentation",
+    "url": "https://techdocs.f5.com/kb/en-us/products/f5os-c/releasenotes/related/relnote-supplement-f5os-c-1-8-2-cr.html",
+    "snippet": "Component: F5OS-C\n\nSymptoms:  \nThis affects the package jinja2 from 0.0.0 and before 2.11.3. The ReDoS vulnerability is mainly due to the `\\_punctuation\\_re regex` operator and its use of multiple wildcards.\n\nConditions:",
+    "date": "Mon, 19 Oct 2026 00:00:00 GMT"
+   },
+   {
+    "title": "Vulnerability Summary for the Week of June 15, 2026 | CISA",
+    "url": "https://www.cisa.gov/news-events/bulletins/sb26-173",
+    "snippet": "`max\\_length` to `-1`, and `\\_flush\\_decoder()` passes no limit at all, defaulting to unlimited decompression. This allows a malicious HTTP server to trigger an out-of-memory (OOM) condition by decompressing large payloa",
+    "date": "Mon, 22 Jun 2026 00:00:00 GMT"
+   },
+   {
+    "title": "Update Log \u00b7 maqp/tfc Wiki \u00b7 GitHub",
+    "url": "https://github.com/maqp/tfc/wiki/Update-Log",
+    "snippet": "Updated Jinja2 to 2.10.1 to address CVE-2019-10906. Fixing this security bug only requires the Relay Program on Networked Computer to be re-installed. This can be done without replacing hardware.\n Updated urllib3 to 1.24",
+    "date": null
+   },
+   {
+    "title": "Vulnerability Summary for the Week of June 15, 2026 | CISA",
+    "url": "https://www.cisa.gov/news-events/bulletins/sb26-173",
+    "snippet": "`max\\_length` to `-1`, and `\\_flush\\_decoder()` passes no limit at all, defaulting to unlimited decompression. This allows a malicious HTTP server to trigger an out-of-memory (OOM) condition by decompressing large payloa",
+    "date": null
+   },
+   {
+    "title": "OSCP/README.md at main \u00b7 0xsyr0/OSCP \u00b7 GitHub",
+    "url": "https://github.com/0xsyr0/OSCP/blob/main/README.md",
+    "snippet": "```\npython3 gen_libc.py \n[] '/lib/x86_64-linux-gnu/libc.so.6'\n    Arch:     amd64-64-little\n    RELRO:    Partial RELRO\n    Stack:    Canary found\n    NX:       NX enabled\n    PIE:      PIE enabled\n```\n\n```\ngcc -o exp ex",
+    "date": null
+   },
+   {
+    "title": "OSCP-guide/README.md at main \u00b7 dollarboysushil/OSCP-guide \u00b7 GitHub",
+    "url": "https://github.com/dollarboysushil/OSCP-guide/blob/main/README.md",
+    "snippet": "```\npython3 gen_libc.py \n[] '/lib/x86_64-linux-gnu/libc.so.6'\n    Arch:     amd64-64-little\n    RELRO:    Partial RELRO\n    Stack:    Canary found\n    NX:       NX enabled\n    PIE:      PIE enabled\n```\n\n```\ngcc -o exp ex",
+    "date": null
+   }
+  ]
+ },
+ "compute": {
+  "id": "45a0c906-a4bf-4719-9618-9415b95ec7e3",
+  "cpu": 1,
+  "memory_gb": 1,
+  "disk_gb": 3,
+  "gpu": 0,
+  "target": "eu",
+  "boot_s": 0.62
+ }
+}
