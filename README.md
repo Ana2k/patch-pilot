@@ -5,6 +5,8 @@
 
 Paste a GitHub repo → find what's exploitable → fix it → prove the fix → plain-English report.
 
+![Daytona](https://img.shields.io/badge/sandbox-Daytona-0b1f3a) ![Nosana](https://img.shields.io/badge/LLM-Nosana-00a3a1) ![Tavily](https://img.shields.io/badge/search-Tavily-4f46e5) ![Python](https://img.shields.io/badge/python-3.12-blue)
+
 Built at **Tokyo AgentForge 2026** with **Daytona · Nosana · Tavily**
 
 **[📑 Pitch deck (PDF)](docs/PatchPilot-deck.pdf)** · **[📊 Results](#-results-on-real-repos)** · **[🚀 Run it](#-run-it)**
@@ -51,13 +53,23 @@ Most breaches start with a **known** bug. Teams don't patch because they can't t
 |:--:|:--:|:--:|
 | <img src="docs/daytona-sandboxes.jpg" width="100%"/> | <img src="docs/nosana-gpu-deployment.jpg" width="100%"/> | <img src="docs/tavily-usage.jpg" width="100%"/> |
 
-## 🚀 Run it
+## 🛡️ Why trust it
+- **Isolated:** every command the AI chooses runs in a throwaway Daytona VM that is deleted after each scan.
+- **Verified:** the Prove step ignores the agent's claims and re-scans and re-tests independently.
+- **Transparent:** you watch every thought, tool call and sandbox command live; reports cite their sources.
+
+## 🧭 Limitations & roadmap
+- Auto-fix ships for Python today; PHP/Node/Go are report-only (with fixes suggested).
+- Next: **AgentField CodeAF** as the in-sandbox fixer (`codeaf do`, pointed at Nosana), a GitHub App that opens verified PRs, and a CI gate.
+
+## 🚀 Run it live
 ```bash
 git clone https://github.com/Ana2k/patch-pilot && cd patch-pilot
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 cp .env.example .env        # DAYTONA_API_KEY, NOSANA_API_KEY, TAVILY_API_KEY
 .venv/bin/uvicorn server:app --port 8000
 ```
-Open `http://localhost:8000`, paste a repo (or leave empty for the demo). Saved reports: `/#case=DVWA`.
+Open `http://localhost:8000`, paste any public repo (or leave it empty for the demo) and click **Run security test**. You'll watch the 5 stages light up, the agent's thoughts, and the sandbox terminal live; the report lands in ~1–2 min.
+Saved reports open instantly: `/#case=CodeAF` · `/#case=DVWA` · `/#case=NodeGoat`.
 
 <sub>`agent.py` orchestrator + fixer · `security.py` sub-agents + report · `scanners.py` PHP/Go/JS/Python checks · `server.py` API · `static/` site · `demo_repo/` fake secrets only. Scanned code runs only inside Daytona.</sub>
